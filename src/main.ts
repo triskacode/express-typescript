@@ -1,4 +1,3 @@
-import { AppException } from "common/exceptions";
 import appConfig from "config/app.config";
 import { DatabaseService } from "database";
 import { ActivityModule } from "modules/activity";
