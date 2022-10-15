@@ -14,8 +14,10 @@ export class AppService {
     this.app.get("/health-check", (_, res) => res.send("OK"));
   }
 
-  registerController(controller: IController) {
-    this.app.use(controller.router);
+  loadController(controller: IController) {
+    const router = controller.initializeRoute(express.Router());
+
+    this.app.use(router);
 
     return this;
   }

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main",
+    "build": "tsc && tsc-alias",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,6 +16,7 @@
     "@types/express": "^4.17.14",
     "@types/node": "^18.8.5",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.7.0",
     "tsconfig-paths": "^4.1.0",
     "typescript": "^4.8.4"
   },
@@ -22,6 +24,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "helmet": "^6.0.0"
+    "helmet": "^6.0.0",
+    "sequelize": "^6.25.1",
+    "sqlite3": "^5.1.2"
   }
 }
