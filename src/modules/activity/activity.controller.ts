@@ -8,7 +8,7 @@ import { UpdateActivityDto } from "./dto/update-activity.dto";
 import { ActivityAttributes } from "./entities/types/activity.type";
 
 export class ActivityController implements Controller {
-  private readonly baseRoutePath = "/activity";
+  private readonly baseRoutePath = "/activity-groups";
 
   constructor(private readonly activityService: ActivityService) {}
 
@@ -24,7 +24,6 @@ export class ActivityController implements Controller {
     req: Request,
     res: Response
   ): Promise<ActivityAttributes[]> {
-    
     const email = req.query.email as string;
     const filter: FilterGetActivitiesDto = {
       take: 10,
@@ -72,9 +71,13 @@ export class ActivityController implements Controller {
   private async deleteActivity(
     req: Request,
     res: Response
-  ): Promise<ActivityAttributes> {
+    // ): Promise<ActivityAttributes> {
+  ): Promise<{}> {
     const id = req.params.id;
 
-    return this.activityService.deleteActivity(+id);
+    // return this.activityService.deleteActivity(+id);
+
+    await this.activityService.deleteActivity(+id);
+    return {};
   }
 }

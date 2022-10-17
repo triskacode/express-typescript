@@ -1,3 +1,4 @@
+import { Cache } from "cache-manager";
 import { Module, OnAfterInitModule } from "common/types";
 import { DatabaseService } from "database";
 import { ActivityRepository } from "modules/activity";
@@ -12,11 +13,12 @@ export class TodoModule implements Module, OnAfterInitModule {
   service: TodoService;
 
   constructor(
-    databaseService: DatabaseService, 
+    databaseService: DatabaseService,
+    cacheService: Cache,
     activityRepository: ActivityRepository
   ) {
     const entity = databaseService.loadEntity(TodoEntity);
-    this.repository = new TodoRepository(entity);
+    this.repository = new TodoRepository(entity, cacheService);
     this.service = new TodoService(this.repository, activityRepository);
 
     this.controller = new TodoController(this.service);

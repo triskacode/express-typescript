@@ -8,7 +8,7 @@ import { TodoAttributes } from "./entities/types/todo.type";
 import { TodoService } from "./todo.service";
 
 export class TodoController implements Controller {
-  private readonly baseRoutePath = "/todo";
+  private readonly baseRoutePath = "/todo-items";
 
   constructor(private readonly todoService: TodoService) {}
 
@@ -24,8 +24,10 @@ export class TodoController implements Controller {
     req: Request,
     res: Response
   ): Promise<TodoAttributes[]> {
+    const activity_group_id = req.query.activity_group_id as string;
     const filter: FilterGetTodosDto = {
       take: 10,
+      ...(activity_group_id ? { where: { activity_group_id } } : {}),
     };
 
     return this.todoService.getTodos(filter);
@@ -51,7 +53,10 @@ export class TodoController implements Controller {
     return this.todoService.createTodo(dto);
   }
 
-  private updateTodo(req: Request, res: Response) {
+  private async updateTodo(
+    req: Request,
+    res: Response
+  ): Promise<TodoAttributes> {
     const id = req.params.id;
 
     const dto: UpdateTodoDto = {
@@ -70,9 +75,12 @@ export class TodoController implements Controller {
     return this.todoService.updateTodo(+id, dto);
   }
 
-  private deleteTodo(req: Request, res: Response): Promise<TodoAttributes> {
+  // private deleteTodo(req: Request, res: Response): Promise<TodoAttributes> {
+  private async deleteTodo(req: Request, res: Response): Promise<{}> {
     const id = req.params.id;
 
-    return this.todoService.deleteTodo(+id);
+    // return this.todoService.deleteTodo(+id);
+    await this.todoService.deleteTodo(+id);
+    return {};
   }
 }

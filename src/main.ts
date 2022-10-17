@@ -1,21 +1,25 @@
+import cacheManager from "cache-manager";
+import cluster from "cluster";
+import { cpus } from "os";
+
+import { logger } from "common/utils";
 import appConfig from "config/app.config";
 import { DatabaseService } from "database";
 import { ActivityModule } from "modules/activity";
+import { TodoModule } from "modules/todo";
 import { AppService } from "./app";
 
-import cluster from "cluster";
-import { cpus } from "os";
-import { TodoModule } from "modules/todo/todo.module";
-import { logger } from "common/utils";
+const cacheService = cacheManager.caching({ store: "memory", ttl: 1 });
 
 function bootstrap() {
   try {
-    const appService = new AppService();
+    const appService = new AppService(cacheService);
     const databaseService = new DatabaseService();
 
-    const activityModule = new ActivityModule(databaseService);
+    const activityModule = new ActivityModule(databaseService, cacheService);
     const todoModule = new TodoModule(
       databaseService,
+      cacheService,
       activityModule.repository
     );
 
@@ -26,10 +30,10 @@ function bootstrap() {
     appService.loadController(todoModule.controller);
 
     appService.listen(+appConfig.port, () =>
-      console.log(`app listening on port: ${appConfig.port}`)
+      logger.info(`app listening on port: ${appConfig.port}`)
     );
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    logger.error(error.message);
     process.exit(1);
   }
 }

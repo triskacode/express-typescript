@@ -1,30 +1,23 @@
-import { NotFoundException } from "common/exceptions";
+import { Cache } from "cache-manager";
 import { Controller } from "common/types";
 import cors from "cors";
-import {
-  default as express,
-  Application,
-  NextFunction,
-  Response,
-  Request,
-} from "express";
-import helmet from "helmet";
+import { default as express, Application } from "express";
 import compression from "compression";
 import { AppRouter } from "./app.router";
 import { httpExceptionHandler } from "./exception-handler/http.exception-handler";
 import { httpRequestLoggerMiddleware } from "./middleware/http-request-logger.middleware";
 import { requestTimeoutMiddleware } from "./middleware/request-timeout.middleware";
+import { httpRequestCachingMiddleware } from "./middleware/http-request-caching.middleware";
 
 export class AppService {
   private app: Application;
 
-  constructor() {
+  constructor(private readonly cacheService: Cache) {
     this.app = express();
 
     this.app.use(express.json());
     this.app.use(cors());
-    // this.app.use(compression());
-    // this.app.use(helmet());
+    this.app.use(compression());
 
     this.loadDefaultMiddlewares();
     this.app.get("/health-check", (_, res) => res.send("OK"));
@@ -45,6 +38,7 @@ export class AppService {
   }
 
   private loadDefaultMiddlewares() {
+    this.app.use(httpRequestCachingMiddleware(this.cacheService));
     this.app.use(requestTimeoutMiddleware);
     this.app.use(httpRequestLoggerMiddleware);
   }

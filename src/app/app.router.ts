@@ -1,6 +1,6 @@
-import { wrapControllerMethod } from "common/middleware";
 import { ControllerMethod, MiddlewareFunction } from "common/types";
 import { Router } from "express";
+import { wrapControllerMethodMiddleware } from "./middleware/wrap-controller-method.middleware";
 
 export class AppRouter {
   static router = Router();
@@ -10,7 +10,10 @@ export class AppRouter {
     controller: ControllerMethod,
     ...middleware: MiddlewareFunction[]
   ) {
-    AppRouter.router.get(path, wrapControllerMethod(controller), ...middleware);
+    AppRouter.router.get(
+      path,
+      ...[...middleware, wrapControllerMethodMiddleware(controller)]
+    );
   }
 
   static post(
@@ -20,8 +23,7 @@ export class AppRouter {
   ) {
     AppRouter.router.post(
       path,
-      wrapControllerMethod(controller),
-      ...middleware
+      ...[...middleware, wrapControllerMethodMiddleware(controller)]
     );
   }
 
@@ -32,8 +34,7 @@ export class AppRouter {
   ) {
     AppRouter.router.patch(
       path,
-      wrapControllerMethod(controller),
-      ...middleware
+      ...[...middleware, wrapControllerMethodMiddleware(controller)]
     );
   }
 
@@ -42,7 +43,10 @@ export class AppRouter {
     controller: ControllerMethod,
     ...middleware: MiddlewareFunction[]
   ) {
-    AppRouter.router.put(path, wrapControllerMethod(controller), ...middleware);
+    AppRouter.router.put(
+      path,
+      ...[...middleware, wrapControllerMethodMiddleware(controller)]
+    );
   }
 
   static delete(
@@ -52,8 +56,7 @@ export class AppRouter {
   ) {
     AppRouter.router.delete(
       path,
-      wrapControllerMethod(controller),
-      ...middleware
+      ...[...middleware, wrapControllerMethodMiddleware(controller)]
     );
   }
 }
