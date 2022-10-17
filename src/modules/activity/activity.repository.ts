@@ -1,4 +1,3 @@
-import { NotFoundException } from "common/exceptions/not-found.exception";
 import { CreateActivityDto } from "./dto/create-activity.dto";
 import { FilterGetActivitiesDto } from "./dto/filter-get-activities.dto";
 import { UpdateActivityDto } from "./dto/update-activity.dto";
@@ -7,7 +6,7 @@ import { ActivityEntity } from "./entities/activity.entity";
 export class ActivityRepository {
   constructor(private readonly activityEntity: typeof ActivityEntity) {}
 
-  async create(dto: CreateActivityDto): Promise<ActivityEntity> {
+  async createActivity(dto: CreateActivityDto): Promise<ActivityEntity> {
     const activity = await this.activityEntity.create(dto);
 
     return activity;

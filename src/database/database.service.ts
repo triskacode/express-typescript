@@ -1,5 +1,6 @@
 import { AppException } from "common/exceptions";
-import { ImplementableEntity } from "common/interfaces";
+import { ImplementableEntity } from "common/types";
+import { logger } from "common/utils";
 import databaseConfig from "config/database.config";
 import { Sequelize } from "sequelize";
 
@@ -11,7 +12,16 @@ export class DatabaseService {
       if (!databaseConfig.databaseUri) {
         throw new AppException("Database uri doesn't exist.");
       } else {
-        this.databaseConnection = new Sequelize(databaseConfig.databaseUri);
+        this.databaseConnection = new Sequelize(databaseConfig.databaseUri, {
+          logging: (sql) => logger.debug(sql),
+          sync: { force: true },
+          pool: {
+            max: 10,
+            min: 0,
+            idle: 20000,
+            acquire: 3000,
+          },
+        });
       }
     }
 
@@ -20,7 +30,7 @@ export class DatabaseService {
 
   loadEntity<Entity extends ImplementableEntity>(entity: Entity) {
     entity.initialize(this.getConnection());
-    this.getConnection().sync({ force: true });
+    this.getConnection().sync();
 
     return entity;
   }

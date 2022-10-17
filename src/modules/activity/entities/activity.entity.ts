@@ -1,12 +1,13 @@
 import { ImplementStaticInterface } from "common/decorators";
-import { ImplementableEntity } from "common/interfaces";
+import { ImplementableEntity, ImplementableRelationEntity } from "common/types";
+import { TodoEntity } from "modules/todo/entities/todo.entity";
 import { DataTypes, Model, Sequelize } from "sequelize";
 import {
   ActivityAttributes,
   ActivityCreationAttributes,
 } from "./types/activity.type";
 
-@ImplementStaticInterface<ImplementableEntity>()
+@ImplementStaticInterface<ImplementableEntity & ImplementableRelationEntity>()
 export class ActivityEntity extends Model<
   ActivityAttributes,
   ActivityCreationAttributes
@@ -26,5 +27,12 @@ export class ActivityEntity extends Model<
       },
       { sequelize: connection, tableName: "activities" }
     );
+  }
+
+  static loadRelation() {
+    ActivityEntity.hasMany(TodoEntity, {
+      foreignKey: "activity_group_id",
+      sourceKey: "id",
+    });
   }
 }

@@ -1,49 +1,37 @@
-import { NotFoundException } from "common/exceptions/not-found.exception";
-import { IController } from "common/interfaces";
-import { wrapAsyncController } from "common/middleware/wrap-async-controller.middleware";
-import { Request, Response, Router } from "express";
-import { ActivityRepository } from "./activity.repository";
+import { AppRouter } from "app";
+import { Controller } from "common/types";
+import { Request, Response } from "express";
+import { ActivityService } from "./activity.service";
 import { CreateActivityDto } from "./dto/create-activity.dto";
+import { FilterGetActivitiesDto } from "./dto/filter-get-activities.dto";
 import { UpdateActivityDto } from "./dto/update-activity.dto";
 import { ActivityAttributes } from "./entities/types/activity.type";
 
-export class ActivityController implements IController {
+export class ActivityController implements Controller {
   private readonly baseRoutePath = "/activity";
 
-  constructor(private readonly activityRepository: ActivityRepository) {}
+  constructor(private readonly activityService: ActivityService) {}
 
-  initializeRoute(router: Router): Router {
-    router.get(
-      this.baseRoutePath,
-      wrapAsyncController(this.getActivities.bind(this))
-    );
-    router.post(
-      this.baseRoutePath,
-      wrapAsyncController(this.createActivity.bind(this))
-    );
-    router.get(
-      this.baseRoutePath + "/:id",
-      wrapAsyncController(this.getActivity.bind(this))
-    );
-    router.patch(
-      this.baseRoutePath + "/:id",
-      wrapAsyncController(this.updateActivity.bind(this))
-    );
-    router.delete(
-      this.baseRoutePath + "/:id",
-      wrapAsyncController(this.deleteActivity.bind(this))
-    );
-
-    return router;
+  initializeRoute(router: typeof AppRouter): void {
+    router.get(this.baseRoutePath, this.getActivities.bind(this));
+    router.post(this.baseRoutePath, this.createActivity.bind(this));
+    router.get(this.baseRoutePath + "/:id", this.getActivity.bind(this));
+    router.patch(this.baseRoutePath + "/:id", this.updateActivity.bind(this));
+    router.delete(this.baseRoutePath + "/:id", this.deleteActivity.bind(this));
   }
 
   private async getActivities(
     req: Request,
     res: Response
   ): Promise<ActivityAttributes[]> {
-    const activities = await this.activityRepository.getActivities();
+    
+    const email = req.query.email as string;
+    const filter: FilterGetActivitiesDto = {
+      take: 10,
+      ...(email ? { where: { email } } : {}),
+    };
 
-    return activities;
+    return this.activityService.getActivities(filter);
   }
 
   private async getActivity(
@@ -52,12 +40,7 @@ export class ActivityController implements IController {
   ): Promise<ActivityAttributes> {
     const id = req.params.id;
 
-    const activity = await this.activityRepository.getActivity(+id);
-
-    if (!activity)
-      throw new NotFoundException(`Activity with id: ${id} not found`);
-
-    return activity;
+    return this.activityService.getActivity(+id);
   }
 
   private async createActivity(
@@ -69,9 +52,7 @@ export class ActivityController implements IController {
       title: req.body.title,
     };
 
-    const activity = await this.activityRepository.create(dto);
-
-    return activity;
+    return this.activityService.createActivity(dto);
   }
 
   private async updateActivity(
@@ -80,22 +61,12 @@ export class ActivityController implements IController {
   ): Promise<ActivityAttributes> {
     const id = req.params.id;
 
-    const activity = await this.activityRepository.getActivity(+id);
-
-    if (!activity)
-      throw new NotFoundException(`Activity with id: ${id} not found`);
-
     const dto: UpdateActivityDto = {
-      ...(req.body.email ? { email: req.body.email } : {}),
-      ...(req.body.title ? { title: req.body.title } : {}),
+      ...(req.body.email !== undefined ? { email: req.body.email } : {}),
+      ...(req.body.title !== undefined ? { title: req.body.title } : {}),
     };
 
-    const updatedActivity = await this.activityRepository.updateActivity(
-      activity,
-      dto
-    );
-
-    return updatedActivity;
+    return this.activityService.updateActivity(+id, dto);
   }
 
   private async deleteActivity(
@@ -104,15 +75,6 @@ export class ActivityController implements IController {
   ): Promise<ActivityAttributes> {
     const id = req.params.id;
 
-    const activity = await this.activityRepository.getActivity(+id);
-
-    if (!activity)
-      throw new NotFoundException(`Activity with id: ${id} not found`);
-
-    const deletedActivity = await this.activityRepository.deleteActivity(
-      activity
-    );
-
-    return deletedActivity;
+    return this.activityService.deleteActivity(+id);
   }
 }
