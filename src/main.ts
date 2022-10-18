@@ -9,7 +9,8 @@ import { ActivityModule } from "modules/activity";
 import { TodoModule } from "modules/todo";
 import { AppService } from "./app";
 
-const cacheService = cacheManager.caching({ store: "memory", ttl: 1 });
+const totalCPUs = cpus().length;
+const cacheService = cacheManager.caching({ store: "memory", ttl: 5 });
 
 function bootstrap() {
   try {
@@ -39,8 +40,6 @@ function bootstrap() {
 }
 
 // bootstrap();
-
-const totalCPUs = cpus().length;
 
 if (cluster.isPrimary) {
   logger.info(`Number of CPUs is ${totalCPUs}`);

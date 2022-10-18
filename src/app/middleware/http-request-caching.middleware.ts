@@ -4,11 +4,17 @@ import { NextFunction, Request, Response } from "express";
 export const httpRequestCachingMiddleware =
   (cacheService: Cache) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    if (req.method.toLocaleUpperCase() === "GET") {
-      const cacheKey = req.path;
-      const cache = await cacheService.get(cacheKey);
-      console.log(cache);
-      //   if(cacheKey)
+    if (req.method.toLocaleUpperCase() !== "GET") {
+      return next();
+    }
+
+    const cacheKey = req.path;
+    const cache = await cacheService.get(cacheKey);
+    console.log(process.pid, cacheKey, cache);
+
+    if (cache) {
+      return res.send(cache);
+    } else {
       const _oldWrite = res.write;
       const _oldEnd = res.end;
 
@@ -26,11 +32,14 @@ export const httpRequestCachingMiddleware =
 
         body = Buffer.concat(chunks).toString("utf8");
 
-        //   cacheService.set(cacheKey, body);
-        //   console.log(body);
+        cacheService.set(cacheKey, body, { ttl: 5 });
+        setTimeout(() => {
+          cacheService.del(cacheKey);
+        }, 5000);
+
         return _oldEnd.apply(res, arguments);
       };
-    }
 
-    return next();
+      return next();
+    }
   };

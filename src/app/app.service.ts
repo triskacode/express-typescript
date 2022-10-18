@@ -38,9 +38,10 @@ export class AppService {
   }
 
   private loadDefaultMiddlewares() {
-    this.app.use(httpRequestCachingMiddleware(this.cacheService));
-    this.app.use(requestTimeoutMiddleware);
     this.app.use(httpRequestLoggerMiddleware);
+    // not working in clustering app must use external cache like redis
+    // this.app.use(httpRequestCachingMiddleware(this.cacheService));
+    this.app.use(requestTimeoutMiddleware);
   }
 
   private loadDefaultErrorHandler() {
