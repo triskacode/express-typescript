@@ -1,0 +1,18 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "10.98.3.79",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "local server dev",
+            "group": "server dev",
+            "username": "triska",
+            "password": "password",
+            "database": "devcode-challenge"
+        }
+    ]
+}

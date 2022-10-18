@@ -29,7 +29,7 @@ export class TodoEntity extends Model<TodoAttributes, TodoCreationAttributes> {
           type: DataTypes.ENUM(...Object.values(Priority)),
           defaultValue: Priority.VeryHigh,
         },
-        activity_group_id: DataTypes.NUMBER,
+        activity_group_id: DataTypes.INTEGER,
       },
       { sequelize: connection, tableName: "todos" }
     );

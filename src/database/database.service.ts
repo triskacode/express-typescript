@@ -13,8 +13,11 @@ export class DatabaseService {
         throw new AppException("Database uri doesn't exist.");
       } else {
         this.databaseConnection = new Sequelize(databaseConfig.databaseUri, {
-          logging: (sql) => logger.debug(sql),
-          sync: { force: true },
+          logging:
+            process.env.NODE_ENV !== "production"
+              ? (sql) => logger.debug(sql)
+              : false,
+          sync: { force: process.env.NODE_ENV !== "production" ? true : false },
           pool: {
             max: 10,
             min: 0,
@@ -26,6 +29,10 @@ export class DatabaseService {
     }
 
     return this.databaseConnection;
+  }
+
+  async testConnection() {
+    await this.getConnection().authenticate();
   }
 
   loadEntity<Entity extends ImplementableEntity>(entity: Entity) {

@@ -12,10 +12,12 @@ import { AppService } from "./app";
 const totalCPUs = cpus().length;
 const cacheService = cacheManager.caching({ store: "memory", ttl: 5 });
 
-function bootstrap() {
+async function bootstrap() {
   try {
     const appService = new AppService(cacheService);
     const databaseService = new DatabaseService();
+
+    await databaseService.testConnection();
 
     const activityModule = new ActivityModule(databaseService, cacheService);
     const todoModule = new TodoModule(
