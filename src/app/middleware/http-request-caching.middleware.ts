@@ -8,7 +8,7 @@ export const httpRequestCachingMiddleware =
       return next();
     }
 
-    const cacheKey = req.path;
+    const cacheKey = req.url;
     const cache = await cacheService.get(cacheKey);
     console.log(process.pid, cacheKey, cache);
 

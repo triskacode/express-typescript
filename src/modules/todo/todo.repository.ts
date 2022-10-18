@@ -74,14 +74,37 @@ export class TodoRepository {
     const keyStr = keys
       ? typeof keys === "string"
         ? `key=${keys}`
-        : Object.keys(keys)
-            .map((key) => `${key}=${keys[key]}`)
-            .join(",")
+        : this.generateCacheKeyFromObj(keys)
       : "";
 
     return `${this.baseCacheKey}-${uniqueKey}${
       keyStr ? `?${keyStr.toLocaleLowerCase()}` : ""
     }`;
+  }
+
+  private generateCacheKeyFromObj(obj: Record<string, any>): string {
+    const stringifyArray = (array: any[]): string => {
+      return array
+        .map((arr) => {
+          if (Array.isArray(arr)) {
+            return stringifyArray(arr);
+          }
+          return arr;
+        })
+        .join(",");
+    };
+
+    return Object.keys(obj)
+      .map((key) => {
+        if (typeof obj[key] === "object") {
+          if (Array.isArray(obj[key])) {
+            return `${key}=${stringifyArray(obj[key])}`;
+          }
+          return `${key}=${this.generateCacheKeyFromObj(obj[key])}`;
+        }
+        return `${key}=${obj[key]}`;
+      })
+      .join("+");
   }
 
   private async clearCache() {

@@ -24,7 +24,7 @@ export class TodoController implements Controller {
     req: Request,
     res: Response
   ): Promise<TodoAttributes[]> {
-    const activity_group_id = req.query.activity_group_id as string;
+    const activity_group_id = +(req.query.activity_group_id as string);
     const filter: FilterGetTodosDto = {
       take: 10,
       ...(activity_group_id ? { where: { activity_group_id } } : {}),

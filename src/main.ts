@@ -9,11 +9,11 @@ import { ActivityModule } from "modules/activity";
 import { TodoModule } from "modules/todo";
 import { AppService } from "./app";
 
-const totalCPUs = cpus().length;
-const cacheService = cacheManager.caching({ store: "memory", ttl: 5 });
+// const totalCPUs = cpus().length;
 
 async function bootstrap() {
   try {
+    const cacheService = cacheManager.caching({ store: "memory", ttl: 5 });
     const appService = new AppService(cacheService);
     const databaseService = new DatabaseService();
 
@@ -41,22 +41,22 @@ async function bootstrap() {
   }
 }
 
-// bootstrap();
+bootstrap();
 
-if (cluster.isPrimary) {
-  logger.info(`Number of CPUs is ${totalCPUs}`);
-  logger.info(`Master ${process.pid} is running`);
+// if (cluster.isPrimary) {
+//   logger.info(`Number of CPUs is ${totalCPUs}`);
+//   logger.info(`Master ${process.pid} is running`);
 
-  for (let i = 0; i < totalCPUs; i++) {
-    cluster.fork();
-  }
+//   for (let i = 0; i < totalCPUs; i++) {
+//     cluster.fork();
+//   }
 
-  cluster.on("exit", (worker, code, signal) => {
-    logger.info(`Worker ${worker.process.pid} died`);
-    logger.info("Let's fork another worker!");
-    cluster.fork();
-  });
-} else {
-  logger.info(`Worker ${process.pid} started`);
-  bootstrap();
-}
+//   cluster.on("exit", (worker, code, signal) => {
+//     logger.info(`Worker ${worker.process.pid} died`);
+//     logger.info("Let's fork another worker!");
+//     cluster.fork();
+//   });
+// } else {
+//   logger.info(`Worker ${process.pid} started`);
+//   bootstrap();
+// }
