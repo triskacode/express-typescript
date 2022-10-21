@@ -1,5 +1,5 @@
-import appConfig from 'config/app.config';
 import 'dotenv/config'
+import appConfig from 'src/config/app.config';
 import winston from "winston";
 
 const levels = {
@@ -34,7 +34,7 @@ const transports = [
 
 winston.addColors(colors);
 export const logger = winston.createLogger({
-  level: appConfig.environment !== "production" ? "debug" : "warn",
+  level: appConfig.environment === "development" ? "debug" : "warn",
   levels,
   format,
   transports,

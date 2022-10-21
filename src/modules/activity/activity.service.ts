@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from "common/exceptions";
+import { BadRequestException, NotFoundException } from "src/common/exceptions";
 import { ActivityRepository } from "./activity.repository";
 import { CreateActivityDto } from "./dto/create-activity.dto";
 import { FilterGetActivitiesDto } from "./dto/filter-get-activities.dto";

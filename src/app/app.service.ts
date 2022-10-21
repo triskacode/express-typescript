@@ -1,8 +1,8 @@
-import { Controller, MiddlewareFunction } from "common/types";
 import compression from "compression";
 import cors from "cors";
 import { default as express, Application } from "express";
 import http from "http";
+import { Controller, MiddlewareFunction } from "src/common/types";
 import { AppRouter } from "./app.router";
 import { httpExceptionHandler } from "./exception-handler/http.exception-handler";
 import { httpRequestLoggerMiddleware } from "./middleware/http-request-logger.middleware";

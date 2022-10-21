@@ -1,5 +1,5 @@
-import { ControllerMethod, MiddlewareFunction } from "common/types";
 import { NextFunction, Request, Response } from "express";
+import { ControllerMethod, MiddlewareFunction } from "src/common/types";
 
 export const wrapControllerMethodMiddleware = <Fn extends ControllerMethod>(
   fn: Fn

@@ -1,5 +1,5 @@
-import { BadRequestException, NotFoundException } from "common/exceptions";
-import { ActivityRepository } from "modules/activity";
+import { BadRequestException, NotFoundException } from "src/common/exceptions";
+import { ActivityRepository } from "src/modules/activity";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { FilterGetTodosDto } from "./dto/filter-get-todos.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";

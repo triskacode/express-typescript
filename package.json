@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "DOTENV_CONFIG_PATH=.env.development ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main",
-    "start:prod": "DOTENV_CONFIG_PATH=.env.production node dist/main",
+    "start:prod": "DOTENV_CONFIG_PATH=.env.production node dist/src/main",
+    "prebuild": "rimraf dist",
     "build": "tsc && tsc-alias",
-    "test": "DOTENV_CONFIG_PATH=.env.test jest",
-    "test:e2e": "DOTENV_CONFIG_PATH=.env.test jest --config test/jest-e2e.config.ts"
+    "test": "DOTENV_CONFIG_PATH=.env.test jest --config jest.config.ts",
+    "test:e2e": "DOTENV_CONFIG_PATH=.env.test jest --config jest-e2e.config.ts"
   },
   "keywords": [],
   "author": "triska.triskacode@gmail.com",
@@ -39,6 +40,7 @@
     "joi": "^17.6.3",
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
+    "rimraf": "^3.0.2",
     "sequelize": "^6.25.1",
     "winston": "^3.8.2"
   }

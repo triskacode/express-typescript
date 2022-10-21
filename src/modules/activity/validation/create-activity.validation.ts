@@ -9,7 +9,7 @@ export const createActivityValidation = joi.object<CreateActivityDto>({
   }),
   title: joi.string().required().messages({
     "string.base": "Parameter 'title' must be a string",
-    // "any.required": "Parameter 'title' is required",
-    "any.required": "title cannot be null",
+    "any.required": "Parameter 'title' is required",
+    // "any.required": "title cannot be null",
   }),
 });

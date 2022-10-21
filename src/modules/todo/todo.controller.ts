@@ -1,5 +1,5 @@
-import { AppRouter } from "app";
-import { Controller } from "common/types";
+import { AppRouter } from "src/app";
+import { Controller } from "src/common/types";
 import { Request, Response } from "express";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { FilterGetTodosDto } from "./dto/filter-get-todos.dto";

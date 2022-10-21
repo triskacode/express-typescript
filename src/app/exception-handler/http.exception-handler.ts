@@ -1,11 +1,11 @@
+import { NextFunction, Request, Response } from "express";
 import {
   BadRequestException,
   NotFoundException,
   RequestTimeoutException,
   ServiceUnavailableException,
-} from "common/exceptions";
-import { logger } from "common/utils";
-import { NextFunction, Request, Response } from "express";
+} from "src/common/exceptions";
+import { logger } from "src/common/utils";
 
 export function httpExceptionHandler(
   err: Error,

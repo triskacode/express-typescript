@@ -1,5 +1,5 @@
-import { AppRouter } from "app";
-import { Controller } from "common/types";
+import { AppRouter } from "src/app";
+import { Controller } from "src/common/types";
 import { Request, Response } from "express";
 import { ActivityService } from "./activity.service";
 import { CreateActivityDto } from "./dto/create-activity.dto";

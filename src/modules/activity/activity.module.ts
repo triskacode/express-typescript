@@ -1,16 +1,16 @@
 import { Cache } from "cache-manager";
-import { OnAfterInitModule } from "common/types";
-import { Module } from "common/types";
-import { DatabaseService } from "database";
+import { OnAfterInitModule } from "src/common/types";
+import { Module } from "src/common/types";
+import { DatabaseService } from "src/database";
 import { ActivityController } from "./activity.controller";
 import { ActivityRepository } from "./activity.repository";
 import { ActivityService } from "./activity.service";
 import { ActivityEntity } from "./entities/activity.entity";
 
 export class ActivityModule implements Module, OnAfterInitModule {
-  controller: ActivityController;
-  repository: ActivityRepository;
-  service: ActivityService;
+  readonly controller: ActivityController;
+  readonly repository: ActivityRepository;
+  readonly service: ActivityService;
 
   constructor(databaseService: DatabaseService, cacheService: Cache) {
     databaseService.loadEntity(ActivityEntity);

@@ -1,7 +1,7 @@
-import { ImplementStaticInterface } from "common/decorators";
-import { ImplementableEntity, ImplementableRelationEntity } from "common/types";
-import { TodoEntity } from "modules/todo/entities/todo.entity";
 import { DataTypes, Model, Sequelize } from "sequelize";
+import { ImplementStaticInterface } from "src/common/decorators";
+import { ImplementableEntity, ImplementableRelationEntity } from "src/common/types";
+import { TodoEntity } from "src/modules/todo/entities/todo.entity";
 import {
   ActivityAttributes,
   ActivityCreationAttributes,

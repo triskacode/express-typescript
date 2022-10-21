@@ -1,16 +1,16 @@
 import { Cache } from "cache-manager";
-import { Module, OnAfterInitModule } from "common/types";
-import { DatabaseService } from "database";
-import { ActivityRepository } from "modules/activity";
+import { Module, OnAfterInitModule } from "src/common/types";
+import { DatabaseService } from "src/database";
+import { ActivityRepository } from "src/modules/activity";
 import { TodoEntity } from "./entities/todo.entity";
 import { TodoController } from "./todo.controller";
 import { TodoRepository } from "./todo.repository";
 import { TodoService } from "./todo.service";
 
 export class TodoModule implements Module, OnAfterInitModule {
-  controller: TodoController;
-  repository: TodoRepository;
-  service: TodoService;
+  readonly controller: TodoController;
+  readonly repository: TodoRepository;
+  readonly service: TodoService;
 
   constructor(
     databaseService: DatabaseService,

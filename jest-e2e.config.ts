@@ -1,20 +1,22 @@
 import { Config } from "jest";
 
 const config: Config = {
+  verbose: true,
   collectCoverageFrom: ["**/*.(t|j)s"],
   coverageDirectory: "../coverage",
   testTimeout: 20000,
   detectOpenHandles: true,
   moduleFileExtensions: ["js", "json", "ts"],
   rootDir: ".",
+  roots: ["test/"],
   testEnvironment: "node",
-  testRegex: ".e2e-spec.ts$",
+  testRegex: ".e2e.spec.ts$",
   transform: {
     "^.+\\.(t|j)s$": "ts-jest",
   },
-  moduleDirectories: ["<rootDir>/../src", "node_modules"],
+  moduleDirectories: ["<rootDir>/src/", "node_modules"],
   moduleNameMapper: {
-    "src/(.*)": "<rootDir>/../src/$1",
+    "src/(.*)": "<rootDir>/src/$1",
   },
 };
 

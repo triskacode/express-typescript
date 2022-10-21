@@ -1,8 +1,8 @@
+import { NextFunction, Request, Response } from "express";
 import {
   RequestTimeoutException,
   ServiceUnavailableException,
-} from "common/exceptions";
-import { NextFunction, Request, Response } from "express";
+} from "src/common/exceptions";
 
 export const requestTimeoutMiddleware = (
   req: Request,

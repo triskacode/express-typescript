@@ -1,5 +1,5 @@
-import { ControllerMethod, MiddlewareFunction } from "common/types";
 import { Router } from "express";
+import { ControllerMethod, MiddlewareFunction } from "src/common/types";
 import { wrapControllerMethodMiddleware } from "./middleware/wrap-controller-method.middleware";
 
 export class AppRouter {

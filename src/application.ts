@@ -1,20 +1,20 @@
-import { AppService } from "app/app.service";
 import cacheManager, { Cache } from "cache-manager";
-import { httpRequestCachingMiddleware } from "common/middleware/http-request-caching.middleware";
-import { logger } from "common/utils";
-import appConfig from "config/app.config";
-import { DatabaseService } from "database";
 import * as express from "express";
-import { ActivityModule } from "modules/activity";
-import { TodoModule } from "modules/todo";
+import { AppService } from "src/app/app.service";
+import { httpRequestCachingMiddleware } from "src/common/middleware/http-request-caching.middleware";
+import { logger } from "src/common/utils";
+import appConfig from "src/config/app.config";
+import { DatabaseService } from "src/database";
+import { ActivityModule } from "src/modules/activity";
+import { TodoModule } from "src/modules/todo";
 
 export class Application {
-  private appService: AppService;
-  private cacheService: Cache;
-  private databaseService: DatabaseService;
+  readonly appService: AppService;
+  readonly cacheService: Cache;
+  readonly databaseService: DatabaseService;
 
-  private activityModule: ActivityModule;
-  private todoModule: TodoModule;
+  activityModule: ActivityModule;
+  readonly todoModule: TodoModule;
 
   constructor() {
     this.appService = new AppService();

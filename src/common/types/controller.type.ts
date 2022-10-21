@@ -1,4 +1,4 @@
-import { AppRouter } from "app";
+import { AppRouter } from "src/app";
 import { Request, Response } from "express";
 
 export interface Controller {

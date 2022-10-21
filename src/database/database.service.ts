@@ -1,9 +1,9 @@
-import { AppException } from "common/exceptions";
-import { ImplementableEntity } from "common/types";
-import { logger } from "common/utils";
-import appConfig from "config/app.config";
-import databaseConfig from "config/database.config";
 import { Sequelize } from "sequelize";
+import { AppException } from "src/common/exceptions";
+import { ImplementableEntity } from "src/common/types";
+import { logger } from "src/common/utils";
+import appConfig from "src/config/app.config";
+import databaseConfig from "src/config/database.config";
 
 export class DatabaseService {
   private databaseConnection: Sequelize;
@@ -15,9 +15,9 @@ export class DatabaseService {
       } else {
         this.databaseConnection = new Sequelize(databaseConfig.databaseUri, {
           logging:
-            appConfig.environment === "production"
-              ? false
-              : (sql) => logger.debug(sql),
+            appConfig.environment === "development"
+              ? (sql) => logger.debug(sql)
+              : false,
           pool: {
             max: 10,
             min: 0,

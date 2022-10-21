@@ -1,4 +1,4 @@
-import { Application } from "application";
+import { Application } from "src/application";
 
 async function bootstrap() {
   const app = new Application();
