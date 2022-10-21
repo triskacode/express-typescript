@@ -1,6 +1,5 @@
 import cacheManager from "cache-manager";
-import cluster from "cluster";
-import { cpus } from "os";
+import { httpRequestCachingMiddleware } from "common/middleware/http-request-caching.middleware";
 
 import { logger } from "common/utils";
 import appConfig from "config/app.config";
@@ -9,16 +8,15 @@ import { ActivityModule } from "modules/activity";
 import { TodoModule } from "modules/todo";
 import { AppService } from "./app";
 
-// const totalCPUs = cpus().length;
-
 async function bootstrap() {
   try {
+    const appService = new AppService();
     const cacheService = cacheManager.caching({ store: "memory", ttl: 5 });
-    const appService = new AppService(cacheService);
     const databaseService = new DatabaseService();
 
     await databaseService.testConnection();
 
+    // load all module
     const activityModule = new ActivityModule(databaseService, cacheService);
     const todoModule = new TodoModule(
       databaseService,
@@ -26,13 +24,21 @@ async function bootstrap() {
       activityModule.repository
     );
 
+    // run post init module script
     activityModule.onAfterInitModule();
     todoModule.onAfterInitModule();
 
-    appService.loadController(activityModule.controller);
-    appService.loadController(todoModule.controller);
+    // register global middleware
+    // not working in clustering app must use external cache like redis
+    appService.registerGlobalMiddleware(
+      httpRequestCachingMiddleware(cacheService)
+    );
 
-    appService.listen(+appConfig.port, () =>
+    // load controller module into app
+    appService.registerController(activityModule.controller);
+    appService.registerController(todoModule.controller);
+
+    appService.runHttpServer(+appConfig.port, () =>
       logger.info(`app listening on port: ${appConfig.port}`)
     );
   } catch (error: any) {
@@ -42,6 +48,8 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+// const totalCPUs = cpus().length;
 
 // if (cluster.isPrimary) {
 //   logger.info(`Number of CPUs is ${totalCPUs}`);

@@ -2,7 +2,7 @@ import { AppRouter } from "app";
 import { Request, Response } from "express";
 
 export interface Controller {
-  initializeRoute(router: typeof AppRouter): void;
+  initializeRoute(router: AppRouter): void;
 }
 
 export type ControllerMethod = (req: Request, res: Response) => any;

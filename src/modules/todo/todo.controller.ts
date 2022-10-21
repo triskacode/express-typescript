@@ -12,7 +12,7 @@ export class TodoController implements Controller {
 
   constructor(private readonly todoService: TodoService) {}
 
-  initializeRoute(router: typeof AppRouter): void {
+  initializeRoute(router: AppRouter): void {
     router.get(this.baseRoutePath, this.getTodos.bind(this));
     router.post(this.baseRoutePath, this.createTodo.bind(this));
     router.get(this.baseRoutePath + "/:id", this.getTodo.bind(this));

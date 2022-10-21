@@ -4,9 +4,9 @@
   "description": "Example express api with typescript",
   "main": "index.js",
   "scripts": {
-    "start:dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main",
+    "start:dev": "DOTENV_CONFIG_PATH=.env.development ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/main",
+    "start:prod": "DOTENV_CONFIG_PATH=.env.production node dist/main",
     "build": "tsc && tsc-alias",
-    "start:prod": "NODE_ENV=production node dist/main",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

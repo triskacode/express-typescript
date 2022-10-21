@@ -10,7 +10,6 @@ export const httpRequestCachingMiddleware =
 
     const cacheKey = req.url;
     const cache = await cacheService.get(cacheKey);
-    console.log(process.pid, cacheKey, cache);
 
     if (cache) {
       return res.send(cache);
@@ -19,7 +18,6 @@ export const httpRequestCachingMiddleware =
       const _oldEnd = res.end;
 
       const chunks = [] as Buffer[];
-      let body: any;
 
       res.write = function (chunk) {
         chunks.push(chunk);
@@ -30,12 +28,9 @@ export const httpRequestCachingMiddleware =
       res.end = function (chunk) {
         if (chunk) chunks.push(chunk);
 
-        body = Buffer.concat(chunks).toString("utf8");
+        const body = Buffer.concat(chunks).toString("utf8");
 
         cacheService.set(cacheKey, body, { ttl: 5 });
-        setTimeout(() => {
-          cacheService.del(cacheKey);
-        }, 5000);
 
         return _oldEnd.apply(res, arguments);
       };

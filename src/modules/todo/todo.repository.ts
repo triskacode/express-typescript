@@ -15,17 +15,10 @@ export class TodoRepository {
   async createTodo(dto: CreateTodoDto): Promise<TodoEntity> {
     const todo = await this.todoEntity.create(dto);
 
-    this.clearCache();
-
     return todo;
   }
 
   async getTodos(filter?: FilterGetTodosDto): Promise<TodoEntity[]> {
-    const cacheKey = this.getCacheKey("get-todos", filter);
-    const cache = (await this.cacheService.get(cacheKey)) as TodoEntity[];
-
-    if (cache) return cache;
-
     const todos = await this.todoEntity.findAll({
       where: filter?.where,
       limit: filter?.take,
@@ -33,13 +26,11 @@ export class TodoRepository {
       order: filter?.orderBy,
     });
 
-    this.cacheService.set(cacheKey, todos, { ttl: 60 });
-
     return todos;
   }
 
   async getTodo(id: number): Promise<TodoEntity | null> {
-    const cacheKey = this.getCacheKey("get-todo", id.toString());
+    const cacheKey = `${this.baseCacheKey}-todo-${id}`;
     const cache = (await this.cacheService.get(cacheKey)) as TodoEntity;
 
     if (cache) return cache;
@@ -55,68 +46,18 @@ export class TodoRepository {
     entity: TodoEntity,
     dto: UpdateTodoDto
   ): Promise<TodoEntity> {
+    const cacheKey = `${this.baseCacheKey}-todo-${entity.id}`;
     const todo = await entity.update(dto);
 
-    this.clearCache();
-
+    this.cacheService.del(cacheKey);
     return todo;
   }
 
   async deleteTodo(entity: TodoEntity): Promise<TodoEntity> {
+    const cacheKey = `${this.baseCacheKey}-todo-${entity.id}`;
     await entity.destroy();
 
-    this.clearCache();
-
+    this.cacheService.del(cacheKey);
     return entity;
-  }
-
-  private getCacheKey(uniqueKey: string, keys?: string | Record<string, any>) {
-    const keyStr = keys
-      ? typeof keys === "string"
-        ? `key=${keys}`
-        : this.generateCacheKeyFromObj(keys)
-      : "";
-
-    return `${this.baseCacheKey}-${uniqueKey}${
-      keyStr ? `?${keyStr.toLocaleLowerCase()}` : ""
-    }`;
-  }
-
-  private generateCacheKeyFromObj(obj: Record<string, any>): string {
-    const stringifyArray = (array: any[]): string => {
-      return array
-        .map((arr) => {
-          if (Array.isArray(arr)) {
-            return stringifyArray(arr);
-          }
-          return arr;
-        })
-        .join(",");
-    };
-
-    return Object.keys(obj)
-      .map((key) => {
-        if (typeof obj[key] === "object") {
-          if (Array.isArray(obj[key])) {
-            return `${key}=${stringifyArray(obj[key])}`;
-          }
-          return `${key}=${this.generateCacheKeyFromObj(obj[key])}`;
-        }
-        return `${key}=${obj[key]}`;
-      })
-      .join("+");
-  }
-
-  private async clearCache() {
-    const keys = (await this.cacheService.store.keys?.()) as string[];
-    const matchedKeys = await keys.filter((key) =>
-      key.match(new RegExp(this.baseCacheKey, "g"))
-    );
-
-    if (matchedKeys.length > 0) {
-      await matchedKeys.map(async (key) => {
-        await this.cacheService.del(key);
-      });
-    }
   }
 }

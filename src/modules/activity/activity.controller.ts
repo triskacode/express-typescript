@@ -12,7 +12,7 @@ export class ActivityController implements Controller {
 
   constructor(private readonly activityService: ActivityService) {}
 
-  initializeRoute(router: typeof AppRouter): void {
+  initializeRoute(router: AppRouter): void {
     router.get(this.baseRoutePath, this.getActivities.bind(this));
     router.post(this.baseRoutePath, this.createActivity.bind(this));
     router.get(this.baseRoutePath + "/:id", this.getActivity.bind(this));

@@ -1,6 +1,7 @@
 import { AppException } from "common/exceptions";
 import { ImplementableEntity } from "common/types";
 import { logger } from "common/utils";
+import appConfig from "config/app.config";
 import databaseConfig from "config/database.config";
 import { Sequelize } from "sequelize";
 
@@ -14,10 +15,12 @@ export class DatabaseService {
       } else {
         this.databaseConnection = new Sequelize(databaseConfig.databaseUri, {
           logging:
-            process.env.NODE_ENV !== "production"
-              ? (sql) => logger.debug(sql)
-              : false,
-          sync: { force: process.env.NODE_ENV !== "production" ? true : false },
+            appConfig.environment === "production"
+              ? false
+              : (sql) => logger.debug(sql),
+          sync: {
+            force: appConfig.environment === "production" ? false : true,
+          },
           pool: {
             max: 10,
             min: 0,
