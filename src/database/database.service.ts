@@ -18,9 +18,6 @@ export class DatabaseService {
             appConfig.environment === "production"
               ? false
               : (sql) => logger.debug(sql),
-          sync: {
-            force: appConfig.environment === "production" ? false : true,
-          },
           pool: {
             max: 10,
             min: 0,
@@ -34,13 +31,18 @@ export class DatabaseService {
     return this.databaseConnection;
   }
 
-  async testConnection() {
+  async testConnection(): Promise<void> {
     await this.getConnection().authenticate();
   }
 
-  loadEntity<Entity extends ImplementableEntity>(entity: Entity) {
+  async syncronizeDatabase(): Promise<void> {
+    if (appConfig.environment !== "production") {
+      await this.getConnection().sync({ force: true });
+    }
+  }
+
+  loadEntity<Entity extends ImplementableEntity>(entity: Entity): Entity {
     entity.initialize(this.getConnection());
-    this.getConnection().sync();
 
     return entity;
   }

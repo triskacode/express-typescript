@@ -1,7 +1,8 @@
 import { Controller, MiddlewareFunction } from "common/types";
+import compression from "compression";
 import cors from "cors";
 import { default as express, Application } from "express";
-import compression from "compression";
+import http from "http";
 import { AppRouter } from "./app.router";
 import { httpExceptionHandler } from "./exception-handler/http.exception-handler";
 import { httpRequestLoggerMiddleware } from "./middleware/http-request-logger.middleware";
@@ -29,12 +30,16 @@ export class AppService {
     this.middlewares.push(middleware);
   }
 
-  runHttpServer(port: number, callback?: () => void): void {
+  createHttpServer() {
     this.loadMiddleware();
     this.loadRouter();
     this.loadErrorHandler();
 
-    this.app.listen(port, callback);
+    return this.app;
+  }
+
+  runHttpServer(port: number, callback?: () => void): http.Server {
+    return this.app.listen(port, callback);
   }
 
   private loadRouter(): void {

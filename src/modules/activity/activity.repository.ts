@@ -7,13 +7,10 @@ import { ActivityEntity } from "./entities/activity.entity";
 export class ActivityRepository {
   private readonly baseCacheKey = "activity-repository";
 
-  constructor(
-    private readonly activityEntity: typeof ActivityEntity,
-    private readonly cacheService: Cache
-  ) {}
+  constructor(private readonly cacheService: Cache) {}
 
   async createActivity(dto: CreateActivityDto): Promise<ActivityEntity> {
-    const activity = await this.activityEntity.create(dto);
+    const activity = await ActivityEntity.create(dto);
 
     return activity;
   }
@@ -21,7 +18,7 @@ export class ActivityRepository {
   async getActivities(
     filter?: FilterGetActivitiesDto
   ): Promise<ActivityEntity[]> {
-    const activities = await this.activityEntity.findAll({
+    const activities = await ActivityEntity.findAll({
       where: filter?.where,
       limit: filter?.take,
       offset: filter?.skip,
@@ -37,7 +34,7 @@ export class ActivityRepository {
 
     if (cache) return cache;
 
-    const activity = await this.activityEntity.findByPk(id);
+    const activity = await ActivityEntity.findByPk(id);
 
     this.cacheService.set(cacheKey, activity, { ttl: 60 });
 

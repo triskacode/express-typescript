@@ -7,19 +7,16 @@ import { TodoEntity } from "./entities/todo.entity";
 export class TodoRepository {
   private readonly baseCacheKey = "todo-repository";
 
-  constructor(
-    private readonly todoEntity: typeof TodoEntity,
-    private readonly cacheService: Cache
-  ) {}
+  constructor(private readonly cacheService: Cache) {}
 
   async createTodo(dto: CreateTodoDto): Promise<TodoEntity> {
-    const todo = await this.todoEntity.create(dto);
+    const todo = await TodoEntity.create(dto);
 
     return todo;
   }
 
   async getTodos(filter?: FilterGetTodosDto): Promise<TodoEntity[]> {
-    const todos = await this.todoEntity.findAll({
+    const todos = await TodoEntity.findAll({
       where: filter?.where,
       limit: filter?.take,
       offset: filter?.skip,
@@ -35,7 +32,7 @@ export class TodoRepository {
 
     if (cache) return cache;
 
-    const todo = await this.todoEntity.findByPk(id);
+    const todo = await TodoEntity.findByPk(id);
 
     this.cacheService.set(cacheKey, todo, { ttl: 60 });
 

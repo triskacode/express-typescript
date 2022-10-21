@@ -17,10 +17,10 @@ export class TodoModule implements Module, OnAfterInitModule {
     cacheService: Cache,
     activityRepository: ActivityRepository
   ) {
-    const entity = databaseService.loadEntity(TodoEntity);
-    this.repository = new TodoRepository(entity, cacheService);
-    this.service = new TodoService(this.repository, activityRepository);
+    databaseService.loadEntity(TodoEntity);
 
+    this.repository = new TodoRepository(cacheService);
+    this.service = new TodoService(this.repository, activityRepository);
     this.controller = new TodoController(this.service);
   }
 

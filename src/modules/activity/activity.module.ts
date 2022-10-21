@@ -13,10 +13,10 @@ export class ActivityModule implements Module, OnAfterInitModule {
   service: ActivityService;
 
   constructor(databaseService: DatabaseService, cacheService: Cache) {
-    const entity = databaseService.loadEntity(ActivityEntity);
-    this.repository = new ActivityRepository(entity, cacheService);
-    this.service = new ActivityService(this.repository);
+    databaseService.loadEntity(ActivityEntity);
 
+    this.repository = new ActivityRepository(cacheService);
+    this.service = new ActivityService(this.repository);
     this.controller = new ActivityController(this.service);
   }
 
