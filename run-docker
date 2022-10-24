@@ -1,3 +1,0 @@
-docker run -d --rm -e MYSQL_HOST=10.98.3.79 -e MYSQL_USER=triska -e MYSQL_PASSWORD=password -e MYSQL_DBNAME=devcode-challenge -p 3030:3030 express-typescript:without-cluster
-
-docker run --rm -e API_URL=http://10.98.3.79:3030 monsterup/devcode-unit-test-1

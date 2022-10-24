@@ -18,4 +18,4 @@ COPY --from=build /app/dist/ ./dist/
 
 ENV NODE_ENV production
 
-CMD [ "node", "dist/main" ]
+CMD [ "npm", "run", "start:prod" ]
