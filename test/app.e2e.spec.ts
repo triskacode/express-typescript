@@ -6,9 +6,8 @@ describe("Application", () => {
   let app: express.Application;
 
   beforeAll(async () => {
-    const appModuleRef = new Application();
-
-    app = await appModuleRef.init();
+    const applicationModule = new Application();
+    app = await applicationModule.init();
   });
 
   describe("GET /health-check", () => {

@@ -27,7 +27,7 @@ export class ActivityController implements Controller {
     const email = req.query.email as string;
     const filter: FilterGetActivitiesDto = {
       take: 10,
-      ...(email ? { where: { email } } : {}),
+      ...(email !== undefined ? { where: { email } } : {}),
     };
 
     return this.activityService.getActivities(filter);

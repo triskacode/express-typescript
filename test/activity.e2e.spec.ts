@@ -1,15 +1,13 @@
 import * as express from "express";
 import { Application } from "src/application";
 import { CreateActivityDto } from "src/modules/activity/dto/create-activity.dto";
+import { UpdateActivityDto } from "src/modules/activity/dto/update-activity.dto";
 import { ActivityEntity } from "src/modules/activity/entities/activity.entity";
 import request from "supertest";
 
 describe("Activity", () => {
   let app: express.Application;
-  const activityDto: CreateActivityDto = {
-    email: "testing@mail.com",
-    title: "testing",
-  };
+  let createActivityDto: CreateActivityDto;
 
   beforeAll(async () => {
     const applicationModule = new Application();
@@ -18,13 +16,18 @@ describe("Activity", () => {
 
   beforeEach(async () => {
     await ActivityEntity.destroy({ where: {} });
+
+    createActivityDto = {
+      email: "testing@mail.com",
+      title: "testing",
+    };
   });
 
   describe("GET /activity-groups", () => {
     test("should return 200 with list of activity", async () => {
       const activities = await ActivityEntity.bulkCreate([
-        activityDto,
-        activityDto,
+        createActivityDto,
+        createActivityDto,
       ]);
       const response = await request(app).get("/activity-groups");
 
@@ -32,31 +35,35 @@ describe("Activity", () => {
       expect(response.body.status).toEqual("Success");
       expect(response.body.data).toHaveLength(2);
       expect(response.body.data).toContainEqual(
-        expect.objectContaining(activityDto)
+        expect.objectContaining(createActivityDto)
       );
     });
   });
 
   describe("GET /activity-groups/:id", () => {
     test("should return 200 with detail activity of given param id", async () => {
-      const activity = await ActivityEntity.create(activityDto);
+      const activity = await ActivityEntity.create(createActivityDto);
       const response = await request(app).get(
         `/activity-groups/${activity.id}`
       );
 
       expect(response.status).toEqual(200);
       expect(response.body.status).toEqual("Success");
-      expect(response.body.data).toEqual(expect.objectContaining(activityDto));
+      expect(response.body.data).toEqual(
+        expect.objectContaining(createActivityDto)
+      );
     });
 
     test("should return 404 if given param id not found", async () => {
-      const activityId = 0;
-      const response = await request(app).get(`/activity-groups/${activityId}`);
+      const sampleNotfoundActivityId = 0;
+      const response = await request(app).get(
+        `/activity-groups/${sampleNotfoundActivityId}`
+      );
 
       expect(response.status).toEqual(404);
       expect(response.body.status).toEqual("Not Found");
       expect(response.body.message).toEqual(
-        `Activity with ID ${activityId} Not Found`
+        `Activity with ID ${sampleNotfoundActivityId} Not Found`
       );
     });
   });
@@ -65,11 +72,13 @@ describe("Activity", () => {
     test("should return 201 with detail activity", async () => {
       const response = await request(app)
         .post("/activity-groups")
-        .send(activityDto);
+        .send(createActivityDto);
 
       expect(response.status).toEqual(201);
       expect(response.body.status).toEqual("Success");
-      expect(response.body.data).toEqual(expect.objectContaining(activityDto));
+      expect(response.body.data).toEqual(
+        expect.objectContaining(createActivityDto)
+      );
     });
 
     test("should return 400 if given body not valid", async () => {
@@ -85,35 +94,36 @@ describe("Activity", () => {
 
   describe("PATCH /activity-groups/:id", () => {
     test("should return 200 with detail activity", async () => {
-      const activity = await ActivityEntity.create(activityDto);
+      const activity = await ActivityEntity.create(createActivityDto);
+      const updateActivityDto: UpdateActivityDto = { title: "updated" };
       const response = await request(app)
         .patch(`/activity-groups/${activity.id}`)
-        .send({ title: "updated" });
+        .send(updateActivityDto);
 
       expect(response.status).toEqual(200);
       expect(response.body.status).toEqual("Success");
       expect(response.body.data).toEqual(
-        expect.objectContaining({ ...activityDto, title: "updated" })
+        expect.objectContaining({ ...createActivityDto, ...updateActivityDto })
       );
     });
 
     test("should return 404 if given param id not found", async () => {
-      const activityId = 0;
+      const sampleNotfoundActivityId = 0;
       const response = await request(app)
-        .patch(`/activity-groups/${activityId}`)
-        .send(activityDto);
+        .patch(`/activity-groups/${sampleNotfoundActivityId}`)
+        .send(createActivityDto);
 
       expect(response.status).toEqual(404);
       expect(response.body.status).toEqual("Not Found");
       expect(response.body.message).toEqual(
-        `Activity with ID ${activityId} Not Found`
+        `Activity with ID ${sampleNotfoundActivityId} Not Found`
       );
     });
   });
 
   describe("DELETE /activity-groups/:id", () => {
     test("should return 200 with empty object", async () => {
-      const activity = await ActivityEntity.create(activityDto);
+      const activity = await ActivityEntity.create(createActivityDto);
       const response = await request(app).delete(
         `/activity-groups/${activity.id}`
       );
@@ -124,15 +134,15 @@ describe("Activity", () => {
     });
 
     test("should return 404 if given param id not found", async () => {
-      const activityId = 0;
+      const sampleNotfoundActivityId = 0;
       const response = await request(app).delete(
-        `/activity-groups/${activityId}`
+        `/activity-groups/${sampleNotfoundActivityId}`
       );
 
       expect(response.status).toEqual(404);
       expect(response.body.status).toEqual("Not Found");
       expect(response.body.message).toEqual(
-        `Activity with ID ${activityId} Not Found`
+        `Activity with ID ${sampleNotfoundActivityId} Not Found`
       );
     });
   });

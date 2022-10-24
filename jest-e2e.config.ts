@@ -4,7 +4,7 @@ const config: Config = {
   verbose: true,
   collectCoverageFrom: ["**/*.(t|j)s"],
   coverageDirectory: "../coverage",
-  testTimeout: 20000,
+  testTimeout: 60000,
   detectOpenHandles: true,
   moduleFileExtensions: ["js", "json", "ts"],
   rootDir: ".",
