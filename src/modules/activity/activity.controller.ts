@@ -20,7 +20,7 @@ export class ActivityController implements Controller {
     router.delete(this.baseRoutePath + "/:id", this.deleteActivity.bind(this));
   }
 
-  private async getActivities(
+  async getActivities(
     req: Request,
     res: Response
   ): Promise<ActivityAttributes[]> {
@@ -33,16 +33,13 @@ export class ActivityController implements Controller {
     return this.activityService.getActivities(filter);
   }
 
-  private async getActivity(
-    req: Request,
-    res: Response
-  ): Promise<ActivityAttributes> {
+  async getActivity(req: Request, res: Response): Promise<ActivityAttributes> {
     const id = req.params.id;
 
     return this.activityService.getActivity(+id);
   }
 
-  private async createActivity(
+  async createActivity(
     req: Request,
     res: Response
   ): Promise<ActivityAttributes> {
@@ -54,7 +51,7 @@ export class ActivityController implements Controller {
     return this.activityService.createActivity(dto);
   }
 
-  private async updateActivity(
+  async updateActivity(
     req: Request,
     res: Response
   ): Promise<ActivityAttributes> {
@@ -68,7 +65,7 @@ export class ActivityController implements Controller {
     return this.activityService.updateActivity(+id, dto);
   }
 
-  private async deleteActivity(
+  async deleteActivity(
     req: Request,
     res: Response
     // ): Promise<ActivityAttributes> {
