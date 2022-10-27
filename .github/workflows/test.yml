@@ -9,7 +9,7 @@ on:
 env:
   MYSQL_HOST: localhost
   MYSQL_PORT: 3306
-  MYSQL_USER: triska
+  MYSQL_USER: root
   MYSQL_PASSWORD: password
   MYSQL_DBNAME: testing
 
@@ -22,10 +22,8 @@ jobs:
         ports:
           - 3306:3306
         env:
-          MYSQL_ROOT_PASSWORD: mysql_root_password
+          MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
           MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -57,9 +55,3 @@ jobs:
         run: pnpm test:unit
       - name: Run e2e test
         run: pnpm test:e2e
-        env:
-          MYSQL_HOST: ${{ env.MYSQL_HOST }}
-          MYSQL_PORT: ${{ env.MYSQL_PORT }}
-          MYSQL_USER: ${{ env.MYSQL_USER }}
-          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
-          MYSQL_DBNAME: ${{ env.MYSQL_DBNAME }}
