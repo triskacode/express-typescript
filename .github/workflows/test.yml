@@ -24,10 +24,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
           MYSQL_DATABASE: ${{ env.MYSQL_DBNAME }}
-          DB_USER: ${{ env.MYSQL_USER }}
-          DB_PASSWORD: ${{ env.MYSQL_PASSWORD }}
         options: >-
-          --health-cmd="mysql -u ${DB_USER} -p ${DB_PASSWORD} -e `SELECT 1` ${MYSQL_DBNAME}"
+          --health-cmd="mysql -uroot -p${MYSQL_ROOT_PASSWORD} -e `SELECT 1` ${MYSQL_DATABASE}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=20
