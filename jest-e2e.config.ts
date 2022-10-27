@@ -10,7 +10,7 @@ const config: Config = {
   rootDir: ".",
   roots: ["test/"],
   testEnvironment: "node",
-  testRegex: ".e2e.spec.ts$",
+  testRegex: ".e2e.(spec|test).ts$",
   transform: {
     "^.+\\.(t|j)s$": "ts-jest",
   },

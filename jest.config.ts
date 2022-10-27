@@ -9,7 +9,7 @@ const config: Config = {
   rootDir: ".",
   roots: ["src/"],
   testEnvironment: "node",
-  testRegex: ".*.(unit|integration).spec.ts$",
+  testRegex: ".*.(unit|integration).(spec|test).ts$",
   transform: {
     "^.+\\.(t|j)s$": "ts-jest",
   },

@@ -20,10 +20,7 @@ export class TodoController implements Controller {
     router.delete(this.baseRoutePath + "/:id", this.deleteTodo.bind(this));
   }
 
-  private async getTodos(
-    req: Request,
-    res: Response
-  ): Promise<TodoAttributes[]> {
+  async getTodos(req: Request, res: Response): Promise<TodoAttributes[]> {
     const activity_group_id = req.query.activity_group_id as string;
     const filter: FilterGetTodosDto = {
       take: 10,
@@ -35,16 +32,13 @@ export class TodoController implements Controller {
     return this.todoService.getTodos(filter);
   }
 
-  private async getTodo(req: Request, res: Response): Promise<TodoAttributes> {
+  async getTodo(req: Request, res: Response): Promise<TodoAttributes> {
     const id = req.params.id;
 
     return this.todoService.getTodo(+id);
   }
 
-  private async createTodo(
-    req: Request,
-    res: Response
-  ): Promise<TodoAttributes> {
+  async createTodo(req: Request, res: Response): Promise<TodoAttributes> {
     const dto: CreateTodoDto = {
       title: req.body.title,
       activity_group_id: req.body.activity_group_id,
@@ -55,10 +49,7 @@ export class TodoController implements Controller {
     return this.todoService.createTodo(dto);
   }
 
-  private async updateTodo(
-    req: Request,
-    res: Response
-  ): Promise<TodoAttributes> {
+  async updateTodo(req: Request, res: Response): Promise<TodoAttributes> {
     const id = req.params.id;
 
     const dto: UpdateTodoDto = {
@@ -77,8 +68,8 @@ export class TodoController implements Controller {
     return this.todoService.updateTodo(+id, dto);
   }
 
-  // private deleteTodo(req: Request, res: Response): Promise<TodoAttributes> {
-  private async deleteTodo(req: Request, res: Response): Promise<{}> {
+  //  deleteTodo(req: Request, res: Response): Promise<TodoAttributes> {
+  async deleteTodo(req: Request, res: Response): Promise<{}> {
     const id = req.params.id;
 
     // return this.todoService.deleteTodo(+id);

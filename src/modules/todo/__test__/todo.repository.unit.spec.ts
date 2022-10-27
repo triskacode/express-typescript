@@ -1,10 +1,11 @@
 import { Cache } from "cache-manager";
-import { ActivityRepository } from "../activity.repository";
-import { ActivityEntity } from "../entities/activity.entity";
+import { TodoEntity } from "../entities/todo.entity";
+import { Priority } from "../entities/types/todo.type";
+import { TodoRepository } from "../todo.repository";
 
-jest.mock("../entities/activity.entity");
+jest.mock("../entities/todo.entity");
 
-const mockActivityEntity = jest.mocked(ActivityEntity);
+const mockTodoEntity = jest.mocked(TodoEntity);
 
 const mockCacheGet = jest.fn();
 const mockCacheSet = jest.fn();
@@ -18,42 +19,44 @@ const mockCacheService = jest.fn(
     } as unknown as Cache)
 );
 
-describe("ActivityRepository", () => {
-  const baseCacheKey = "activity-repository";
-  let activityRepository: ActivityRepository;
+describe("TodoRepository", () => {
+  const baseCacheKey = "todo-repository";
+  let todoRepository: TodoRepository;
 
   beforeEach(() => {
     const cacheService = new mockCacheService();
-    activityRepository = new ActivityRepository(cacheService);
+    todoRepository = new TodoRepository(cacheService);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("createActivity", () => {
-    test("should call create on ActivityEntity with dto param", async () => {
+  describe("createTodo", () => {
+    test("should call create on TodoEntity with dto param", async () => {
       const fakeDto = {
-        email: "testing@gmail.com",
         title: "testing title",
+        activity_group_id: 1,
+        is_active: true,
+        priority: Priority.Normal,
       };
 
-      await activityRepository.createActivity(fakeDto);
+      await todoRepository.createTodo(fakeDto);
 
-      expect(mockActivityEntity.create).toHaveBeenCalledWith(fakeDto);
+      expect(mockTodoEntity.create).toHaveBeenCalledWith(fakeDto);
     });
   });
 
-  describe("getActivities", () => {
-    test("should call findAll on ActivityEntity with filter param", async () => {
+  describe("getTodos", () => {
+    test("should call findAll on TodoEntity with filter param", async () => {
       const fakeFilter = {
         take: 10,
-        where: { email: "testing@mail.com" },
+        where: { activity_group_id: 1 },
       };
 
-      await activityRepository.getActivities(fakeFilter);
+      await todoRepository.getTodos(fakeFilter);
 
-      expect(mockActivityEntity.findAll).toHaveBeenCalledWith({
+      expect(mockTodoEntity.findAll).toHaveBeenCalledWith({
         where: fakeFilter.where,
         limit: fakeFilter.take,
         offset: undefined,
@@ -62,7 +65,7 @@ describe("ActivityRepository", () => {
     });
   });
 
-  describe("getActivity", () => {
+  describe("getTodo", () => {
     beforeEach(() => {
       mockCacheGet.mockImplementation((...args) => ({}));
       mockCacheSet.mockImplementation((...args) => ({}));
@@ -70,62 +73,62 @@ describe("ActivityRepository", () => {
 
     test("should check to cache if given param id is already exist, return it", async () => {
       const fakeId = 1;
-      const fakeCacheKey = `${baseCacheKey}-activity-${fakeId}`;
+      const fakeCacheKey = `${baseCacheKey}-todo-${fakeId}`;
 
-      await expect(activityRepository.getActivity(fakeId)).resolves.toEqual({});
+      await expect(todoRepository.getTodo(fakeId)).resolves.toEqual({});
 
       expect(mockCacheGet).toHaveBeenCalledWith(fakeCacheKey);
     });
 
-    test("should call findByPk on ActivityEntity with id param and store result to cache when cache not exist", async () => {
+    test("should call findByPk on TodoEntity with id param and store result to cache when cache not exist", async () => {
       const fakeId = 1;
-      const fakeCacheKey = `${baseCacheKey}-activity-${fakeId}`;
+      const fakeCacheKey = `${baseCacheKey}-todo-${fakeId}`;
 
       mockCacheGet.mockReturnValue(undefined);
 
-      await activityRepository.getActivity(fakeId);
+      await todoRepository.getTodo(fakeId);
 
-      expect(mockActivityEntity.findByPk).toHaveBeenCalledWith(fakeId);
+      expect(mockTodoEntity.findByPk).toHaveBeenCalledWith(fakeId);
       expect(mockCacheSet).toHaveBeenCalledWith(fakeCacheKey, undefined, {
         ttl: 60,
       });
     });
   });
 
-  describe("updateActivity", () => {
+  describe("updateTodo", () => {
     beforeEach(() => {
       mockCacheDel.mockImplementation((...args) => ({} as any));
     });
-  
+
     test("should call update on entity param and delete cache with given entity.id", async () => {
       const fakeDto = {
-        email: "testing@gmail.com",
         title: "testing title",
+        activity_group_id: 1,
       };
-      const fakeEntity = new ActivityEntity(fakeDto);
-      const fakeCacheKey = `${baseCacheKey}-activity-${fakeEntity.id}`;
+      const fakeEntity = new TodoEntity(fakeDto);
+      const fakeCacheKey = `${baseCacheKey}-todo-${fakeEntity.id}`;
 
-      await activityRepository.updateActivity(fakeEntity, fakeDto);
+      await todoRepository.updateTodo(fakeEntity, fakeDto);
 
       expect(fakeEntity.update).toHaveBeenCalledWith(fakeDto);
       expect(mockCacheDel).toHaveBeenCalledWith(fakeCacheKey);
     });
   });
 
-  describe("deleteActivity", () => {
+  describe("deleteTodo", () => {
     beforeEach(() => {
       mockCacheDel.mockImplementation((...args) => ({} as any));
     });
-  
+
     test("should call destroy on entity param and delete cache with given entity.id", async () => {
       const fakeDto = {
-        email: "testing@gmail.com",
         title: "testing title",
+        activity_group_id: 1,
       };
-      const fakeEntity = new ActivityEntity(fakeDto);
-      const fakeCacheKey = `${baseCacheKey}-activity-${fakeEntity.id}`;
+      const fakeEntity = new TodoEntity(fakeDto);
+      const fakeCacheKey = `${baseCacheKey}-todo-${fakeEntity.id}`;
 
-      await activityRepository.deleteActivity(fakeEntity);
+      await todoRepository.deleteTodo(fakeEntity);
 
       expect(fakeEntity.destroy).toHaveBeenCalled();
       expect(mockCacheDel).toHaveBeenCalledWith(fakeCacheKey);

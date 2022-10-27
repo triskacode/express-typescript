@@ -39,336 +39,317 @@ describe("ActivityService", () => {
   let activityService: ActivityService;
 
   beforeEach(() => {
-    mockGetActivities.mockImplementation((args) => [] as any);
-    mockGetActivity.mockImplementation((args) => ({} as any));
-    mockCreateActivity.mockImplementation((args) => ({} as any));
-    mockUpdateActivity.mockImplementation((args) => ({} as any));
-    mockDeleteActivity.mockImplementation((args) => ({} as any));
+    const activityRepository = new mockActivityRepository();
+    activityService = new ActivityService(activityRepository);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  beforeEach(() => {
-    const activityRepository = new mockActivityRepository();
-    activityService = new ActivityService(activityRepository);
-  });
-
   describe("getActivities", () => {
+    beforeEach(() => {
+      mockGetActivities.mockImplementation((args) => []);
+      mockFilterGetActivitiesValidation.validate.mockImplementation((args) => ({
+        error: undefined,
+        value: args,
+      }));
+    });
+
     test("should validate given filter param", async () => {
-      const mockFilter = {
+      const fakeFilter = {
         take: 10,
         where: { email: "testing@mail.com" },
       };
 
-      mockFilterGetActivitiesValidation.validate.mockReturnValue({
-        error: undefined,
-        value: {},
-      });
-
-      await activityService.getActivities(mockFilter);
+      await activityService.getActivities(fakeFilter);
 
       expect(mockFilterGetActivitiesValidation.validate).toHaveBeenCalledWith(
-        mockFilter
+        fakeFilter
       );
     });
 
     test("should throw BadRequestException when validation produce error", async () => {
-      const mockErrorMessage = "Some Error Message";
-      const mockFilter = {
+      const fakeErrorMessage = "Some Error Message";
+      const fakeFilter = {
         take: 10,
         where: { email: "testing@mail.com" },
       };
 
       mockFilterGetActivitiesValidation.validate.mockReturnValue({
-        error: new Error(mockErrorMessage) as ValidationError,
+        error: new Error(fakeErrorMessage) as ValidationError,
         value: undefined,
       });
 
-      await expect(activityService.getActivities(mockFilter)).rejects.toThrow(
-        new BadRequestException(mockErrorMessage)
+      await expect(activityService.getActivities(fakeFilter)).rejects.toThrow(
+        new BadRequestException(fakeErrorMessage)
       );
     });
 
     test("should call repository with param validated filter", async () => {
-      const mockEmail = "testing@mail.com";
-      const mockFilter = {
+      const fakeFilter = {
         take: 10,
-        where: { email: mockEmail },
+        where: { email: "testing@mail.com" },
       };
 
-      mockFilterGetActivitiesValidation.validate.mockReturnValue({
-        error: undefined,
-        value: {},
-      });
-
-      await expect(activityService.getActivities(mockFilter)).resolves.toEqual(
+      await expect(activityService.getActivities(fakeFilter)).resolves.toEqual(
         []
       );
 
-      expect(mockGetActivities).toBeCalledWith(mockFilter);
+      expect(mockGetActivities).toBeCalledWith(fakeFilter);
     });
   });
 
   describe("getActivity", () => {
-    test("should validate given id param", async () => {
-      const mockId = 1;
-
-      mockGetActivityValidation.validate.mockReturnValue({
+    beforeEach(() => {
+      mockGetActivity.mockImplementation((args) => ({}));
+      mockGetActivityValidation.validate.mockImplementation((args) => ({
         error: undefined,
-        value: mockId,
-      });
+        value: args,
+      }));
+    });
 
-      await activityService.getActivity(mockId);
+    test("should validate given id param", async () => {
+      const fakeId = 1;
 
-      expect(mockGetActivityValidation.validate).toHaveBeenCalledWith(mockId);
+      await activityService.getActivity(fakeId);
+
+      expect(mockGetActivityValidation.validate).toHaveBeenCalledWith(fakeId);
     });
 
     test("should throw BadRequestException when validation produce error", async () => {
-      const mockErrorMessage = "Some Error Message";
-      const mockId = 1;
+      const fakeErrorMessage = "Some Error Message";
+      const fakeId = 1;
 
       mockGetActivityValidation.validate.mockReturnValue({
-        error: new Error(mockErrorMessage) as ValidationError,
+        error: new Error(fakeErrorMessage) as ValidationError,
         value: undefined,
       });
 
-      await expect(activityService.getActivity(mockId)).rejects.toThrow(
-        new BadRequestException(mockErrorMessage)
+      await expect(activityService.getActivity(fakeId)).rejects.toThrow(
+        new BadRequestException(fakeErrorMessage)
       );
     });
 
     test("should call repository with param validated id", async () => {
-      const mockEmail = "testing@mail.com";
-      const mockId = 1;
+      const fakeId = 1;
 
-      mockGetActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockId,
-      });
+      await expect(activityService.getActivity(fakeId)).resolves.toEqual({});
 
-      await expect(activityService.getActivity(mockId)).resolves.toEqual({});
-
-      expect(mockGetActivity).toBeCalledWith(mockId);
+      expect(mockGetActivity).toBeCalledWith(fakeId);
     });
 
     test("should throw NotFoundException when given param id not exist", async () => {
-      const mockId = 1;
+      const fakeId = 1;
 
-      mockGetActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockId,
-      });
-      mockGetActivity.mockImplementation((id) => undefined);
+      mockGetActivity.mockReturnValue(undefined);
 
-      await expect(activityService.getActivity(mockId)).rejects.toThrow(
-        new NotFoundException(`Activity with ID ${mockId} Not Found`)
+      await expect(activityService.getActivity(fakeId)).rejects.toThrow(
+        new NotFoundException(`Activity with ID ${fakeId} Not Found`)
       );
     });
   });
 
   describe("createActivity", () => {
+    beforeEach(() => {
+      mockCreateActivity.mockImplementation((args) => ({}));
+      mockCreateActivityValidation.validate.mockImplementation((args) => ({
+        error: undefined,
+        value: args,
+      }));
+    });
+
     test("should validate given dto param", async () => {
-      const mockDto = {
+      const fakeDto = {
         email: "testing@gmail.com",
         title: "testing title",
       };
 
-      mockCreateActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockDto,
-      });
-
-      await activityService.createActivity(mockDto);
+      await activityService.createActivity(fakeDto);
 
       expect(mockCreateActivityValidation.validate).toHaveBeenCalledWith(
-        mockDto
+        fakeDto
       );
     });
 
     test("should throw BadRequestException when validation produce error", async () => {
-      const mockErrorMessage = "Some Error Message";
-      const mockDto = {
+      const fakeErrorMessage = "Some Error Message";
+      const fakeDto = {
         email: "testing@gmail.com",
         title: "testing title",
       };
 
       mockCreateActivityValidation.validate.mockReturnValue({
-        error: new Error(mockErrorMessage) as ValidationError,
+        error: new Error(fakeErrorMessage) as ValidationError,
         value: undefined,
       });
 
-      await expect(activityService.createActivity(mockDto)).rejects.toThrow(
-        new BadRequestException(mockErrorMessage)
+      await expect(activityService.createActivity(fakeDto)).rejects.toThrow(
+        new BadRequestException(fakeErrorMessage)
       );
     });
 
     test("should call repository with param validated dto", async () => {
-      const mockDto = {
+      const fakeDto = {
         email: "testing@gmail.com",
         title: "testing title",
       };
 
-      mockCreateActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockDto,
-      });
-      await expect(activityService.createActivity(mockDto)).resolves.toEqual(
+      await expect(activityService.createActivity(fakeDto)).resolves.toEqual(
         {}
       );
 
-      expect(mockCreateActivity).toBeCalledWith(mockDto);
+      expect(mockCreateActivity).toBeCalledWith(fakeDto);
     });
   });
 
   describe("updateActivity", () => {
+    beforeEach(() => {
+      mockGetActivity.mockImplementation((args) => ({}));
+      mockUpdateActivity.mockImplementation((args) => ({}));
+      mockGetActivityValidation.validate.mockImplementation((args) => ({
+        error: undefined,
+        value: args,
+      }));
+      mockUpdateActivityValidation.validate.mockImplementation((args) => ({
+        error: undefined,
+        value: args,
+      }));
+    });
+
     test("should validate given id and dto param", async () => {
-      const mockId = 1;
-      const mockDto = {
+      const fakeId = 1;
+      const fakeDto = {
         title: "testing title",
       };
 
-      mockGetActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockId,
-      });
-      mockUpdateActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockDto,
-      });
+      await activityService.updateActivity(fakeId, fakeDto);
 
-      await activityService.updateActivity(mockId, mockDto);
-
-      expect(mockGetActivityValidation.validate).toHaveBeenCalledWith(mockId);
+      expect(mockGetActivityValidation.validate).toHaveBeenCalledWith(fakeId);
       expect(mockUpdateActivityValidation.validate).toHaveBeenCalledWith(
-        mockDto
+        fakeDto
       );
     });
 
     test("should throw BadRequestException when validation produce error", async () => {
-      const mockErrorMessage = "Some Error Message";
-      const mockId = 1;
-      const mockDto = {
+      const fakeErrorMessage = "Some Error Message";
+      const fakeId = 1;
+      const fakeDto = {
         title: "testing title",
       };
 
       mockGetActivityValidation.validate.mockReturnValue({
-        error: new Error(mockErrorMessage) as ValidationError,
+        error: new Error(fakeErrorMessage) as ValidationError,
         value: undefined,
       });
       mockUpdateActivityValidation.validate.mockReturnValue({
-        error: new Error(mockErrorMessage) as ValidationError,
+        error: new Error(fakeErrorMessage) as ValidationError,
         value: undefined,
       });
 
       await expect(
-        activityService.updateActivity(mockId, mockDto)
-      ).rejects.toThrow(new BadRequestException(mockErrorMessage));
+        activityService.updateActivity(fakeId, fakeDto)
+      ).rejects.toThrow(new BadRequestException(fakeErrorMessage));
     });
 
-    test("should call getActivity and updateActivity repository with param validated id and dto", async () => {
-      const mockId = 1;
-      const mockDto = {
+    test("should validate given param id to activityRepository", async () => {
+      const fakeId = 1;
+      const fakeDto = {
         title: "testing title",
       };
 
-      mockGetActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockId,
-      });
-      mockUpdateActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockDto,
-      });
+      await activityService.updateActivity(fakeId, fakeDto);
 
-      await expect(
-        activityService.updateActivity(mockId, mockDto)
-      ).resolves.toEqual({});
-
-      expect(mockGetActivity).toBeCalledWith(mockId);
-      expect(mockUpdateActivity).toBeCalledWith({}, mockDto);
+      expect(mockGetActivity).toBeCalledWith(fakeId);
     });
 
     test("should throw NotFoundException when given param id not exist", async () => {
-      const mockId = 1;
-      const mockDto = {
+      const fakeId = 1;
+      const fakeDto = {
         title: "testing title",
       };
 
-      mockGetActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockId,
-      });
-      mockUpdateActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockDto,
-      });
-
-      mockGetActivity.mockImplementation((id) => undefined);
+      mockGetActivity.mockReturnValue(undefined);
 
       await expect(
-        activityService.updateActivity(mockId, mockDto)
+        activityService.updateActivity(fakeId, fakeDto)
       ).rejects.toThrow(
-        new NotFoundException(`Activity with ID ${mockId} Not Found`)
+        new NotFoundException(`Activity with ID ${fakeId} Not Found`)
       );
+    });
+
+    test("should call updateActivity repository with param activityEntity and dto", async () => {
+      const fakeId = 1;
+      const fakeActivityEntity = {};
+      const fakeDto = {
+        title: "testing title",
+      };
+
+      await expect(
+        activityService.updateActivity(fakeId, fakeDto)
+      ).resolves.toEqual({});
+
+      expect(mockUpdateActivity).toBeCalledWith(fakeActivityEntity, fakeDto);
     });
   });
 
   describe("deleteActivity", () => {
-    test("should validate given id param", async () => {
-      const mockId = 1;
-
-      mockGetActivityValidation.validate.mockReturnValue({
+    beforeEach(() => {
+      mockGetActivity.mockImplementation((args) => ({}));
+      mockDeleteActivity.mockImplementation((args) => ({}));
+      mockGetActivityValidation.validate.mockImplementation((args) => ({
         error: undefined,
-        value: mockId,
-      });
+        value: args,
+      }));
+    });
 
-      await activityService.deleteActivity(mockId);
+    test("should validate given id param", async () => {
+      const fakeId = 1;
 
-      expect(mockGetActivityValidation.validate).toHaveBeenCalledWith(mockId);
+      await activityService.deleteActivity(fakeId);
+
+      expect(mockGetActivityValidation.validate).toHaveBeenCalledWith(fakeId);
     });
 
     test("should throw BadRequestException when validation produce error", async () => {
-      const mockErrorMessage = "Some Error Message";
-      const mockId = 1;
+      const fakeErrorMessage = "Some Error Message";
+      const fakeId = 1;
 
       mockGetActivityValidation.validate.mockReturnValue({
-        error: new Error(mockErrorMessage) as ValidationError,
+        error: new Error(fakeErrorMessage) as ValidationError,
         value: undefined,
       });
 
-      await expect(activityService.deleteActivity(mockId)).rejects.toThrow(
-        new BadRequestException(mockErrorMessage)
+      await expect(activityService.deleteActivity(fakeId)).rejects.toThrow(
+        new BadRequestException(fakeErrorMessage)
       );
     });
 
-    test("should call getActivity and deleteActivity repository with param validated id", async () => {
-      const mockId = 1;
+    test("should validate given param id to activityRepository", async () => {
+      const fakeId = 1;
 
-      mockGetActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockId,
-      });
+      await activityService.deleteActivity(fakeId);
 
-      await expect(activityService.deleteActivity(mockId)).resolves.toEqual({});
-
-      expect(mockGetActivity).toBeCalledWith(mockId);
-      expect(mockDeleteActivity).toBeCalledWith({});
+      expect(mockGetActivity).toBeCalledWith(fakeId);
     });
 
     test("should throw NotFoundException when given param id not exist", async () => {
-      const mockId = 1;
+      const fakeId = 1;
 
-      mockGetActivityValidation.validate.mockReturnValue({
-        error: undefined,
-        value: mockId,
-      });
-      mockGetActivity.mockImplementation((id) => undefined);
+      mockGetActivity.mockReturnValue(undefined);
 
-      await expect(activityService.deleteActivity(mockId)).rejects.toThrow(
-        new NotFoundException(`Activity with ID ${mockId} Not Found`)
+      await expect(activityService.deleteActivity(fakeId)).rejects.toThrow(
+        new NotFoundException(`Activity with ID ${fakeId} Not Found`)
       );
+    });
+
+    test("should call deleteActivity repository with param activityEntity", async () => {
+      const fakeId = 1;
+      const fakeActivityEntity = {};
+
+      await expect(activityService.deleteActivity(fakeId)).resolves.toEqual({});
+
+      expect(mockDeleteActivity).toBeCalledWith(fakeActivityEntity);
     });
   });
 });

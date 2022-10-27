@@ -22,108 +22,124 @@ describe("ActivityController", () => {
   let activityController: ActivityController;
 
   beforeEach(() => {
-    mockGetActivities.mockImplementation((args) => [] as any);
-    mockGetActivity.mockImplementation((args) => ({} as any));
-    mockCreateActivity.mockImplementation((args) => ({} as any));
-    mockUpdateActivity.mockImplementation((args) => ({} as any));
-    mockDeleteActivity.mockImplementation((args) => ({} as any));
+    const activityService = new mockActivityService();
+    activityController = new ActivityController(activityService);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  beforeEach(() => {
-    const activityService = new mockActivityService();
-    activityController = new ActivityController(activityService);
-  });
-
   describe("getActivities", () => {
-    test("should call service with param filter limit 10 item by default", async () => {
-      const request = { query: {} } as unknown as Request;
-      const response = {} as unknown as Response;
+    beforeEach(() => {
+      mockGetActivities.mockImplementation((args) => []);
+    });
 
-      activityController.getActivities(request, response);
+    test("should call service with param filter limit 10 item by default", async () => {
+      const fakeRequest = { query: {} } as unknown as Request;
+      const fakeResponse = {} as unknown as Response;
+
+      await activityController.getActivities(fakeRequest, fakeResponse);
 
       expect(mockGetActivities).toHaveBeenCalledWith({ take: 10 });
     });
 
     test("should call service with param filter email when adding email field in request query", async () => {
-      const request = {
+      const fakeEmail = "testing@mail.com";
+      const fakeRequest = {
         query: {
-          email: "testing@mail.com",
+          email: fakeEmail,
         },
       } as unknown as Request;
-      const response = {} as unknown as Response;
+      const fakeResponse = {} as unknown as Response;
 
-      activityController.getActivities(request, response);
+      await activityController.getActivities(fakeRequest, fakeResponse);
 
       expect(mockGetActivities).toHaveBeenCalledWith({
         take: 10,
-        where: { email: "testing@mail.com" },
+        where: { email: fakeEmail },
       });
     });
   });
 
   describe("getActivity", () => {
+    beforeEach(() => {
+      mockGetActivity.mockImplementation((args) => ({}));
+    });
+
     test("should call service with param id from request params", async () => {
-      const request = { params: { id: 1 } } as unknown as Request;
-      const response = {} as unknown as Response;
+      const fakeId = 1;
+      const fakeRequest = { params: { id: fakeId } } as unknown as Request;
+      const fakeResponse = {} as unknown as Response;
 
-      activityController.getActivity(request, response);
+      await activityController.getActivity(fakeRequest, fakeResponse);
 
-      expect(mockGetActivity).toHaveBeenCalledWith(1);
+      expect(mockGetActivity).toHaveBeenCalledWith(fakeId);
     });
   });
 
   describe("createActivity", () => {
+    beforeEach(() => {
+      mockCreateActivity.mockImplementation((args) => ({}));
+    });
+
     test("should call service with param dto from request body", async () => {
-      const mockEmail = "testing@gmail.com";
-      const mockTitle = "testing title";
-      const request = {
+      const fakeEmail = "testing@gmail.com";
+      const fakeTitle = "testing title";
+      const fakeRequest = {
         body: {
-          email: mockEmail,
-          title: mockTitle,
+          email: fakeEmail,
+          title: fakeTitle,
         },
       } as unknown as Request;
-      const response = {} as unknown as Response;
+      const fakeResponse = {} as unknown as Response;
 
-      activityController.createActivity(request, response);
+      await activityController.createActivity(fakeRequest, fakeResponse);
 
       expect(mockCreateActivity).toHaveBeenCalledWith({
-        email: mockEmail,
-        title: mockTitle,
+        email: fakeEmail,
+        title: fakeTitle,
       });
     });
   });
 
   describe("updateActivity", () => {
+    beforeEach(() => {
+      mockUpdateActivity.mockImplementation((args) => ({}));
+    });
+
     test("should call service with param id and dto from request params and body", async () => {
-      const mockTitle = "testing title";
-      const request = {
-        params: { id: 1 },
+      const fakeId = 1;
+      const fakeTitle = "testing title";
+      const fakeRequest = {
+        params: { id: fakeId },
         body: {
-          title: mockTitle,
+          title: fakeTitle,
         },
       } as unknown as Request;
-      const response = {} as unknown as Response;
+      const fakeResponse = {} as unknown as Response;
 
-      activityController.updateActivity(request, response);
+      await activityController.updateActivity(fakeRequest, fakeResponse);
 
-      expect(mockUpdateActivity).toHaveBeenCalledWith(1, {
-        title: mockTitle,
+      expect(mockUpdateActivity).toHaveBeenCalledWith(fakeId, {
+        title: fakeTitle,
       });
     });
   });
 
   describe("deleteActivity", () => {
+    beforeEach(() => {
+      mockDeleteActivity.mockImplementation((args) => ({}));
+    });
+
     test("should call service with param id from request params", async () => {
-      const request = { params: { id: 1 } } as unknown as Request;
-      const response = {} as unknown as Response;
+      const fakeId = 1;
+      const fakeRequest = { params: { id: fakeId } } as unknown as Request;
+      const fakeResponse = {} as unknown as Response;
 
-      activityController.deleteActivity(request, response);
+      await activityController.deleteActivity(fakeRequest, fakeResponse);
 
-      expect(mockDeleteActivity).toHaveBeenCalledWith(1);
+      expect(mockDeleteActivity).toHaveBeenCalledWith(fakeId);
     });
   });
 });
