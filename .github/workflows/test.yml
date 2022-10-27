@@ -24,13 +24,10 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
           MYSQL_DATABASE: ${{ env.MYSQL_DBNAME }}
-          MYSQL_USER: root
-          MYSQL_PASSWORD: password
-          MYSQL_DBNAME: testing
         options: >-
           --health-cmd="mysqladmin -u $MYSQL_USER -p $MYSQL_PASSWORD ping"
           --health-interval=10s
-          --health-timeout=120s
+          --health-timeout=60s
           --health-retries=5
     steps:
       - name: Check out repository code
