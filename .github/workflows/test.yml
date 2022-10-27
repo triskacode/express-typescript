@@ -23,7 +23,7 @@ jobs:
           - 3306:3306
         env:
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DBNAME }}
           MYSQL_USER: root
           MYSQL_PASSWORD: password
           MYSQL_DBNAME: testing
