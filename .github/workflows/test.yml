@@ -15,7 +15,7 @@ env:
 
 jobs:
   test:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     services:
       mysql:
         image: mysql:8.0.31-oracle
@@ -24,12 +24,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
           MYSQL_DATABASE: ${{ env.MYSQL_DBNAME }}
-        options: >-
-          --name=mysql-service
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=20
+        options: --name=mysql-service
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
