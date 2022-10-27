@@ -1,7 +1,7 @@
 import cacheManager, { Cache } from "cache-manager";
 import * as express from "express";
-import { AppService } from "src/app/app.service";
-import { httpRequestCachingMiddleware } from "src/common/middleware/http-request-caching.middleware";
+import { AppService } from "src/app";
+import { httpRequestCachingMiddleware } from "src/common/middleware";
 import { logger } from "src/common/utils";
 import appConfig from "src/config/app.config";
 import { DatabaseService } from "src/database";
