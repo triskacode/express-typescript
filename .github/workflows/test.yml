@@ -25,24 +25,29 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ env.MYSQL_PASSWORD }}
           MYSQL_DATABASE: ${{ env.MYSQL_DBNAME }}
         options: --name=mysql-service
+
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+
       - name: Install Nodejs
         uses: actions/setup-node@v3
         with:
           node-version: 16.18.0
+
       - name: Install pnpm
         id: pnpm-install
         uses: pnpm/action-setup@v2.2.4
         with:
           version: 7
           run_install: false
+
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
       - name: Setup pnpm cache
         uses: actions/cache@v3
         with:
@@ -50,14 +55,18 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
       - name: Run unit test
         run: pnpm test:unit
+
       - name: Waiting mysql service ready to accept connection
         run: |
           while ! docker exec mysql-service mysql --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_PASSWORD }} -e "SELECT 1"  ${{ env.MYSQL_DBNAME }}>/dev/null 2>&1; do
               sleep 1
           done
+
       - name: Run e2e test
         run: pnpm test:e2e
