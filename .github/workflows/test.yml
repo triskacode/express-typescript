@@ -1,0 +1,49 @@
+name: Run Test
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+env:
+  MYSQL_HOST: localhost
+  MYSQL_PORT: 3306
+  MYSQL_USER: triska
+  MYSQL_PASSWORD: password
+  MYSQL_DBNAME: testing
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0.31-oracle
+        options: --default-authentication-plugin=mysql_native_password
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: mysql_root_password
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Use Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.18.0
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run unit test
+        run: pnpm test:unit
+      - name: Run e2e test
+        run: pnpm test:e2e
+        env:
+          MYSQL_HOST: ${{ env.MYSQL_HOST }}
+          MYSQL_PORT: ${{ env.MYSQL_PORT }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+          MYSQL_DBNAME: ${{ env.MYSQL_DBNAME }}
