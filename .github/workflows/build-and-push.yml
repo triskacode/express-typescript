@@ -7,6 +7,11 @@ on:
     branches: ["v[0-9]+.[0-9]+.[0-9]+"]
 
 jobs:
+  coba:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "push to docker hub"
+      
   build_and_push:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}

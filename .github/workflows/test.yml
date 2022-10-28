@@ -2,9 +2,13 @@ name: Run Test
 
 on:
   push:
-    branches: ["master", "v[0-9]+.[0-9]+.[0-9]+"]
+    branches: 
+      - master
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
   pull_request:
-    branches: ["master"]
+    branches: 
+      - master
 
 env:
   MYSQL_HOST: localhost
