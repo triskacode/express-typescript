@@ -63,6 +63,7 @@ jobs:
         run: pnpm test:unit
 
       - name: Waiting mysql service ready to accept connection
+        timeout-minutes: 5
         run: |
           while ! docker exec mysql-service mysql --user=${{ env.MYSQL_USER }} --password=${{ env.MYSQL_PASSWORD }} -e "SELECT 1"  ${{ env.MYSQL_DBNAME }}>/dev/null 2>&1; do
               sleep 1
